@@ -1,4 +1,35 @@
 <?php echo $header; ?>
+<?php
+//db info 
+
+$connectstr_dbhost = '';
+$connectstr_dbname = '';
+$connectstr_dbusername = '';
+$connectstr_dbpassword = '';
+if (isset($_SERVER['MYSQLCONNSTR_localdb']))
+{
+//Windows app service
+foreach ($_SERVER as $key => $value) {
+    if (strpos($key, "MYSQLCONNSTR_") !== 0) {
+        continue;
+    }
+    
+    $connectstr_dbfullhost = preg_replace("/^.*Data Source=(.+?);.*$/", "\\1", $value);
+    $connectstr_dbhost = substr($connectstr_dbfullhost, 0 , strpos($connectstr_dbfullhost ,":"));
+    $connectstr_dbname = preg_replace("/^.*Database=(.+?);.*$/", "\\1", $value);
+    $connectstr_dbusername = preg_replace("/^.*User Id=(.+?);.*$/", "\\1", $value);
+    $connectstr_dbpassword = preg_replace("/^.*Password=(.+?)$/", "\\1", $value);
+   }
+}
+//Port for MYSQL in-app or ClearDB 
+    $connectstr_port = getenv('WEBSITE_MYSQL_PORT');
+    if (empty($connectstr_port))
+    {
+      $connectstr_port= 3306;
+    }
+
+?>
+
 <div class="container">
   <header>
     <div class="row">
@@ -52,8 +83,8 @@
           </div>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-db-hostname"><?php echo $entry_db_hostname; ?></label>
-            <div class="col-sm-10">
-              <input type="text" name="db_hostname" value="<?php echo $db_hostname; ?>" id="input-db-hostname" class="form-control" />
+            <div class="col-sm-10">$entry_db_hostname;
+              <input type="text" name="db_hostname" value="<?php echo  $connectstr_dbhost ; ?>" id="input-db-hostname" class="form-control" />
               <?php if ($error_db_hostname) { ?>
               <div class="text-danger"><?php echo $error_db_hostname; ?></div>
               <?php } ?>
@@ -62,7 +93,7 @@
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-db-username"><?php echo $entry_db_username; ?></label>
             <div class="col-sm-10">
-              <input type="text" name="db_username" value="<?php echo $db_username; ?>" id="input-db-username" class="form-control" />
+              <input type="text" name="db_username" value="<?php echo  $connectstr_dbusername; ?>" id="input-db-username" class="form-control" />
               <?php if ($error_db_username) { ?>
               <div class="text-danger"><?php echo $error_db_username; ?></div>
               <?php } ?>
@@ -71,13 +102,13 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="input-db-password"><?php echo $entry_db_password; ?></label>
             <div class="col-sm-10">
-              <input type="password" name="db_password" value="<?php echo $db_password; ?>" id="input-db-password" class="form-control" />
+              <input type="password" name="db_password" value="<?php echo  $connectstr_dbpassword; ?>" id="input-db-password" class="form-control" />
             </div>
           </div>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-db-database"><?php echo $entry_db_database; ?></label>
             <div class="col-sm-10">
-              <input type="text" name="db_database" value="<?php echo $db_database; ?>" id="input-db-database" class="form-control" />
+              <input type="text" name="db_database" value="<?php echo $connectstr_dbname; ?>" id="input-db-database" class="form-control" />
               <?php if ($error_db_database) { ?>
               <div class="text-danger"><?php echo $error_db_database; ?></div>
               <?php } ?>
@@ -86,7 +117,7 @@
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-db-port"><?php echo $entry_db_port; ?></label>
             <div class="col-sm-10">
-              <input type="text" name="db_port" value="<?php echo $db_port; ?>" id="input-db-port" class="form-control" />
+              <input type="text" name="db_port" value="<?php echo $connectstr_port; ?>" id="input-db-port" class="form-control" />
               <?php if ($error_db_port) { ?>
               <div class="text-danger"><?php echo $error_db_port; ?></div>
               <?php } ?>
